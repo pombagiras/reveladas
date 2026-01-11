@@ -18,19 +18,6 @@
   </a>
 </p>
 
-<p align="center">
-  <a href="https://github.com/alexialuzdeferro/pombagira-revelada">
-    <img src="https://img.shields.io/github/stars/alexialuzdeferro/pombagira-revelada?style=for-the-badge&color=ff007f&label=ESTRELAS" alt="GitHub Stars">
-  </a>
-  <a href="https://github.com/alexialuzdeferro/pombagira-revelada/fork">
-    <img src="https://img.shields.io/badge/FAZER_FORK-6200ea?style=for-the-badge&logo=github&logoColor=white" alt="Fork">
-  </a>
-  <a href="https://alexialuzdeferro.github.io/pombagira-revelada/">
-    <img src="https://img.shields.io/badge/STATUS-VIVO-00e5ff?style=for-the-badge" alt="Status">
-  </a>
-</p>
-
-<div style="width: 80%; height: 2px; background: linear-gradient(90deg, transparent, #ff007f, #00e5ff, #6200ea, transparent); margin: 30px auto; border-radius: 2px; box-shadow: 0 0 15px rgba(255, 0, 127, 0.3);"></div>
 
 </div>
 

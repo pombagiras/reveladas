@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <a href="https://alexialuzdeferro.github.io/pombagira-revelada/" 
+  <a href="https://alexialuzdeferro.github.io/pombagira_revelada/" 
      style="display: inline-block; padding: 14px 32px; background: linear-gradient(135deg, #ff007f, #6200ea, #00e5ff); color: white; text-decoration: none; border-radius: 50px; font-weight: bold; border: 2px solid rgba(255, 255, 255, 0.15); box-shadow: 0 0 25px rgba(255, 0, 127, 0.4), 0 0 50px rgba(0, 229, 255, 0.2); transition: all 0.3s ease; position: relative; overflow: hidden; text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);"
      onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 0 35px rgba(255, 0, 127, 0.6), 0 0 70px rgba(0, 229, 255, 0.4), 0 0 100px rgba(98, 0, 234, 0.3)'; this.style.background='linear-gradient(135deg, #ff3399, #7a1fff, #33eeff)'"
      onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 0 25px rgba(255, 0, 127, 0.4), 0 0 50px rgba(0, 229, 255, 0.2)'; this.style.background='linear-gradient(135deg, #ff007f, #6200ea, #00e5ff)'"

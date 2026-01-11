@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="color-scheme" content="dark only" />
+  <title>POMBAGIRA REVELADA</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    :root{
+      --bg0:#07010f;
+      --bg1:#1a0b2e;
+      --hot:#ff007f;
+      --violet:#6200ea;
+      --cyan:#00e5ff;
+      --card:rgba(255,255,255,0.06);
+      --stroke:rgba(255,255,255,0.12);
+      --text:#ffffff;
+      --shadow: 0 24px 80px rgba(0,0,0,0.65);
+    }
+
+    html, body { height: 100%; }
+    body{
+      font-family: Poppins, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: radial-gradient(1200px 900px at 20% -10%, rgba(255,0,127,0.20), transparent 55%),
+                  radial-gradient(1000px 800px at 95% 10%, rgba(0,229,255,0.14), transparent 55%),
+                  radial-gradient(1200px 900px at 70% 120%, rgba(98,0,234,0.18), transparent 55%),
+                  linear-gradient(180deg, var(--bg0), var(--bg1));
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    /* Aurora layer */
+    .aurora{
+      position: fixed;
+      inset: -40vh -20vw;
+      z-index: -3;
+      background:
+        radial-gradient(closest-side at 18% 30%, rgba(255,0,127,0.22), transparent 65%),
+        radial-gradient(closest-side at 70% 25%, rgba(0,229,255,0.18), transparent 65%),
+        radial-gradient(closest-side at 60% 85%, rgba(98,0,234,0.22), transparent 65%);
+      filter: blur(36px) saturate(120%);
+      transform: translateZ(0);
+      animation: auroraMove 10s ease-in-out infinite alternate;
+      opacity: 0.95;
+    }
+    @keyframes auroraMove{
+      0%{ transform: translate3d(-2%, -1%, 0) scale(1.02) rotate(-1deg); }
+      100%{ transform: translate3d(2%, 1%, 0) scale(1.06) rotate(1deg); }
+    }
+
+    /* Noise overlay */
+    .noise{
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      pointer-events: none;
+      opacity: 0.10;
+      background-image: url('data:image/svg+xml;utf8,<?xml version="1.0" encoding="UTF-8"?><svg xmlns="http://www.w3.org/2000/svg" width="140" height="140"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" stitchTiles="stitch"/></filter><rect width="140" height="140" filter="url(%23n)" opacity=".5"/></svg>');
+      mix-blend-mode: overlay;
+    }
+
+    /* Ember canvas behind content */
+    #embers{
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      opacity: 0.85;
+    }
+
+    /* Glass */
+    .glass{
+      background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.05));
+      border: 1px solid rgba(255,255,255,0.12);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    .title-font{ font-family: Cinzel, serif; letter-spacing: 0.08em; }
+
+    /* Neon underline */
+    .neon-line{
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,0,127,0.7), rgba(0,229,255,0.55), transparent);
+      filter: drop-shadow(0 0 10px rgba(255,0,127,0.35));
+    }
+
+    /* Buttons */
+    .btn-neon{
+      position: relative;
+      overflow: hidden;
+      isolation: isolate;
+    }
+    .btn-neon::before{
+      content: "";
+      position: absolute;
+      inset: -2px;
+      background: conic-gradient(from 180deg at 50% 50%, rgba(255,0,127,0.0), rgba(255,0,127,0.7), rgba(0,229,255,0.65), rgba(98,0,234,0.75), rgba(255,0,127,0.0));
+      z-index: -2;
+      filter: blur(14px);
+      opacity: 0.75;
+      animation: spin 6s linear infinite;
+    }
+    .btn-neon::after{
+      content: "";
+      position: absolute;
+      inset: 1px;
+      background: linear-gradient(180deg, rgba(10,6,18,0.85), rgba(10,6,18,0.65));
+      z-index: -1;
+      border-radius: 999px;
+    }
+    @keyframes spin{ to{ transform: rotate(360deg); } }
+
+    /* Queen card shine + tilt helpers */
+    .queen-card{
+      transform-style: preserve-3d;
+      will-change: transform;
+    }
+    .queen-card .shine{
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(360px 240px at var(--mx, 50%) var(--my, 50%), rgba(255,255,255,0.15), transparent 55%);
+      opacity: 0;
+      transition: opacity .2s ease;
+      pointer-events: none;
+    }
+    .queen-card:hover .shine{ opacity: 1; }
+
+    /* Modal */
+    #overlay{ display:none; }
+    #overlay.show{ display:flex; }
+    .modal-in{ animation: modalIn .22s ease-out; }
+    @keyframes modalIn{
+      from{ opacity: 0; transform: translateY(12px) scale(0.98); }
+      to{ opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce){
+      .aurora{ animation: none !important; }
+      .btn-neon::before{ animation: none !important; }
+      .modal-in{ animation: none !important; }
+    }
+
+    /* iOS tap highlight */
+    *{ -webkit-tap-highlight-color: transparent; }
+  </style>
+</head>
+<body class="min-h-screen">
+  <div class="aurora" aria-hidden="true"></div>
+  <div class="noise" aria-hidden="true"></div>
+  <canvas id="embers" aria-hidden="true"></canvas>
+
+  <header class="relative">
+    <div class="mx-auto max-w-6xl px-4 pt-10 pb-6 sm:pt-14">
+      <div class="glass rounded-3xl p-6 sm:p-10 shadow-[var(--shadow)]">
+        <div class="flex flex-col gap-6">
+          <div class="flex items-start justify-between gap-4">
+            <div>
+              <h1 class="title-font mt-1 text-3xl sm:text-5xl font-bold uppercase leading-tight">
+                <span class="bg-gradient-to-r from-white via-white to-[var(--hot)] bg-clip-text text-transparent drop-shadow-[0_0_18px_rgba(255,0,127,0.25)]">Pombagira</span>
+                <span class="bg-gradient-to-r from-[var(--hot)] via-[var(--violet)] to-[var(--cyan)] bg-clip-text text-transparent drop-shadow-[0_0_24px_rgba(98,0,234,0.25)]"> Revelada</span>
+              </h1>
+            </div>
+
+            <div class="hidden sm:flex items-center gap-2">
+              <button id="toggleMotion" class="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs text-white/80 hover:bg-white/10 transition" type="button">
+                Reduzir movimento
+              </button>
+              <button id="toggleGlow" class="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs text-white/80 hover:bg-white/10 transition" type="button">
+                Modo brilho
+              </button>
+            </div>
+          </div>
+
+          <div class="neon-line"></div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
+            <a class="btn-neon group rounded-full px-5 py-4 text-center font-semibold tracking-wide" href="https://bio.site/AlmasdePombagira" target="_blank" rel="noopener">
+              <span class="relative inline-flex items-center justify-center gap-2 text-white">
+                <span class="text-lg">❤</span>
+                <span>Almas de Pombagira</span>
+                <span class="opacity-0 group-hover:opacity-100 transition text-white/70">↗</span>
+              </span>
+            </a>
+            <a class="btn-neon group rounded-full px-5 py-4 text-center font-semibold tracking-wide" href="https://linktr.ee/alexiarosadefogo" target="_blank" rel="noopener">
+              <span class="relative inline-flex items-center justify-center gap-2 text-white">
+                <span class="text-lg">🔥</span>
+                <span>Alexia Rosa de Fogo</span>
+                <span class="opacity-0 group-hover:opacity-100 transition text-white/70">↗</span>
+              </span>
+            </a>
+            <a class="btn-neon group rounded-full px-5 py-4 text-center font-semibold tracking-wide" href="https://pombagiras.my.canva.site/" target="_blank" rel="noopener">
+              <span class="relative inline-flex items-center justify-center gap-2 text-white">
+                <span class="text-lg">🔱</span>
+                <span>Site Oficial Canva</span>
+                <span class="opacity-0 group-hover:opacity-100 transition text-white/70">↗</span>
+              </span>
+            </a>
+          </div>
+
+          <div class="flex items-center justify-end">
+            <span id="lastRevealPill" class="hidden rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/75"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="mx-auto max-w-6xl px-4 pb-14">
+    <section class="mt-6">
+      <div class="mt-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4" id="queenGrid" aria-live="polite"></div>
+    </section>
+
+    <section class="mt-10">
+      <div class="glass rounded-3xl p-6 sm:p-8">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h3 class="title-font text-lg sm:text-xl font-bold tracking-wider">Portais</h3>
+          </div>
+        </div>
+
+        <div class="mt-6 grid grid-cols-2 md:grid-cols-4 gap-3">
+          <a href="https://alexialuzdeferro.github.io/PONTOS-CANTADOS/" target="_blank" rel="noopener" class="group glass relative rounded-2xl px-4 py-4 text-sm text-white/85 hover:border-white/20 transition flex flex-col items-center justify-center text-center gap-1 min-h-[92px]">
+            <div class="text-base">🎵</div>
+            <div class="font-semibold leading-tight">Pontos Cantados</div>
+            <span class="absolute right-3 top-3 opacity-0 group-hover:opacity-100 transition text-white/60 text-xs">↗</span>
+          </a>
+
+          <a href="https://alexialuzdeferro.github.io/paz/" target="_blank" rel="noopener" class="group glass relative rounded-2xl px-4 py-4 text-sm text-white/85 hover:border-white/20 transition flex flex-col items-center justify-center text-center gap-1 min-h-[92px]">
+            <div class="text-base">🧘</div>
+            <div class="font-semibold leading-tight">Relaxamento Espiritual</div>
+            <span class="absolute right-3 top-3 opacity-0 group-hover:opacity-100 transition text-white/60 text-xs">↗</span>
+          </a>
+
+          <a href="https://alexialuzdeferro.github.io/grimorio-das-pombagiras/" target="_blank" rel="noopener" class="group glass relative rounded-2xl px-4 py-4 text-sm text-white/85 hover:border-white/20 transition flex flex-col items-center justify-center text-center gap-1 min-h-[92px]">
+            <div class="text-base">📖</div>
+            <div class="font-semibold leading-tight">Grimório</div>
+            <div class="text-xs text-white/60">Símbolos e memória</div>
+            <span class="absolute right-3 top-3 opacity-0 group-hover:opacity-100 transition text-white/60 text-xs">↗</span>
+          </a>
+
+          <a href="https://alexialuzdeferro.github.io/melusine_redes/" target="_blank" rel="noopener" class="group glass relative rounded-2xl px-4 py-4 text-sm text-white/85 hover:border-white/20 transition flex flex-col items-center justify-center text-center gap-1 min-h-[92px]">
+            <div class="text-base">📱</div>
+            <div class="font-semibold leading-tight">Redes Sociais</div>
+            <div class="text-xs text-white/60">Contato e presença</div>
+            <span class="absolute right-3 top-3 opacity-0 group-hover:opacity-100 transition text-white/60 text-xs">↗</span>
+          </a>
+
+          <a href="https://alexialuzdeferro.github.io/pombagira-revelada/" target="_blank" rel="noopener" class="group glass relative rounded-2xl px-4 py-4 text-sm text-white/85 hover:border-white/20 transition flex flex-col items-center justify-center text-center gap-1 min-h-[92px]">
+            <div class="text-base">❓</div>
+            <div class="font-semibold leading-tight">Quem é a sua Pombagira?</div>
+            <div class="text-xs text-white/60">Descubra caminhos</div>
+            <span class="absolute right-3 top-3 opacity-0 group-hover:opacity-100 transition text-white/60 text-xs">↗</span>
+          </a>
+
+          <a href="https://alexialuzdeferro.github.io/Velas-Virtuais/" target="_blank" rel="noopener" class="group glass relative rounded-2xl px-4 py-4 text-sm text-white/85 hover:border-white/20 transition flex flex-col items-center justify-center text-center gap-1 min-h-[92px]">
+            <div class="text-base">🕯️</div>
+            <div class="font-semibold leading-tight">Vela Virtual</div>
+            <div class="text-xs text-white/60">Intenção e foco</div>
+            <span class="absolute right-3 top-3 opacity-0 group-hover:opacity-100 transition text-white/60 text-xs">↗</span>
+          </a>
+
+          <a href="https://alexialuzdeferro.github.io/Cartas-Rosa-e-Fogo/" target="_blank" rel="noopener" class="group glass relative rounded-2xl px-4 py-4 text-sm text-white/85 hover:border-white/20 transition flex flex-col items-center justify-center text-center gap-1 min-h-[92px]">
+            <div class="text-base">🃏</div>
+            <div class="font-semibold leading-tight">Retire sua Carta</div>
+            <div class="text-xs text-white/60">Oráculo e sinais</div>
+            <span class="absolute right-3 top-3 opacity-0 group-hover:opacity-100 transition text-white/60 text-xs">↗</span>
+          </a>
+
+          <a href="https://alexialuzdeferro.github.io/Pombagiras/" target="_blank" rel="noopener" class="group glass relative rounded-2xl px-4 py-4 text-sm text-white/85 hover:border-white/20 transition flex flex-col items-center justify-center text-center gap-1 min-h-[92px]">
+            <div class="text-base">🌐</div>
+            <div class="font-semibold leading-tight">Site Pombagiras</div>
+            <div class="text-xs text-white/60">Arquivo completo</div>
+            <span class="absolute right-3 top-3 opacity-0 group-hover:opacity-100 transition text-white/60 text-xs">↗</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <footer class="mt-10 text-center text-xs text-white/55">
+      <div class="neon-line mx-auto max-w-3xl"></div>
+      <p class="mt-5">"As Pombagiras não são entidades leves ou para brincadeiras. Elas exigem oferendas, promessas cumpridas e um coração sincero."</p>
+    </footer>
+  </main>
+
+  <!-- Modal / Overlay -->
+  <div id="overlay" class="fixed inset-0 z-[1000] items-center justify-center p-4 bg-black/80">
+    <div class="absolute inset-0" data-close="true" aria-hidden="true"></div>
+
+    <div id="modal" class="modal-in relative w-full max-w-3xl glass rounded-3xl overflow-hidden shadow-[var(--shadow)]">
+      <div class="absolute inset-0 pointer-events-none" style="background: radial-gradient(800px 420px at 20% 10%, rgba(255,0,127,0.22), transparent 60%), radial-gradient(900px 520px at 90% 20%, rgba(0,229,255,0.16), transparent 60%), radial-gradient(900px 620px at 70% 120%, rgba(98,0,234,0.18), transparent 60%);"></div>
+
+      <button id="close" class="absolute right-3 top-3 z-10 rounded-full border border-white/10 bg-black/30 px-3 py-2 text-sm text-white/80 hover:bg-black/40 transition" type="button" aria-label="Fechar">×</button>
+
+      <div class="relative grid grid-cols-1 md:grid-cols-5 gap-0">
+        <div class="md:col-span-2 relative min-h-[240px] md:min-h-[360px]">
+          <img id="mImg" alt="" class="absolute inset-0 h-full w-full object-cover" />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-black/10"></div>
+          <div class="absolute left-4 bottom-4 right-4">
+            <div id="mTag" class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs text-white/85"></div>
+          </div>
+        </div>
+
+        <div class="md:col-span-3 relative p-6 sm:p-8 max-h-[72vh] overflow-auto">
+          <div class="flex items-start justify-between gap-4">
+            <div>
+              <h3 id="mTitle" class="title-font text-2xl sm:text-3xl font-bold tracking-wider"></h3>
+              <p id="mDomain" class="mt-2 text-sm text-white/80"></p>
+            </div>
+            <div id="mEmoji" class="text-3xl"></div>
+          </div>
+
+          <div class="mt-5 neon-line"></div>
+
+          <div id="mDesc" class="mt-5 text-sm sm:text-base text-white/80 leading-relaxed space-y-3"></div>
+
+          <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <button id="mSigns" class="rounded-2xl bg-gradient-to-r from-[var(--hot)] via-[var(--violet)] to-[var(--cyan)] px-4 py-3 text-center font-extrabold tracking-wide hover:brightness-110 transition" type="button">SINAIS</button>
+            <button id="mCare" class="rounded-2xl border border-white/12 bg-white/5 px-4 py-3 font-extrabold tracking-wide text-white/90 hover:bg-white/10 transition" type="button">CUIDADOS</button>
+          </div>
+
+          <div id="mExtra" class="mt-4 hidden rounded-2xl border border-white/10 bg-white/5 px-4 py-4 text-sm text-white/85 leading-relaxed"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const queens = [
+      {
+        name: "Maria Padilha",
+        emoji: "👑",
+        img: "https://raw.githubusercontent.com/alexialuzdeferro/pombagira-revelada/refs/heads/main/maria_padilha_the_vengeful_pombagira_stands_in.jpeg",
+        domain: "Comando/Realeza",
+        desc: "A Rainha das Pombagiras, governa com sabedoria e força.",
+        details: {
+          about: `Maria Padilha é uma das Pombagiras mais conhecidas e reverenciadas, associada à realeza, ao comando e à sedução. Dizem que ela foi uma rainha ou nobre em vida, e sua energia é de poder, liderança e controle. É invocada para questões de autoridade, justiça e também para abrir caminhos em situações de dificuldade. Seu sincretismo é frequentemente ligado à figura de Maria Madalena ou à Rainha do Sabá. Curiosamente, seu nome pode ter origem em uma lenda portuguesa sobre uma mulher de grande influência e beleza.`,
+          day: "Sexta-feira.",
+          moon: "Lua cheia (poder máximo).",
+          colors: "Vermelho, dourado, preto.",
+          offerings: "Champanhe, rosas vermelhas, joias, velas douradas, perfumes caros, maços de cigarro (se for de seu agrado).",
+          signs: "Leão (poder, realeza), Escorpião (intensidade).",
+          places: "Encruzilhadas limpas, altares decorados com luxo, espelhos.",
+          symbolism: "Coroa, cetro, espelho, rosas vermelhas.",
+          utensils: "Espada (para corte de demandas), espelho (reflexão de poder), taça de cristal.",
+          calunga: "Encruzilhadas de estradas largas ou altares em locais altos."
+        }
+      },
+      {
+        name: "Maria Mulambo",
+        emoji: "🍷",
+        img: "https://raw.githubusercontent.com/alexialuzdeferro/pombagira-revelada/refs/heads/main/maria_mulambo_the_most_feared_pombagira_sits%20(3).jpeg",
+        domain: "Cura/Humildade",
+        desc: "Acolhedora e maternal, transforma a dor em renovação.",
+        details: {
+          about: `Maria Mulambo é a Pombagira da cura e da humildade, muitas vezes representada como uma mulher simples, vestida de trapos, mas com um coração puro e cheio de compaixão. Ela atua na cura de doenças físicas e espirituais, especialmente aquelas ligadas à pobreza e ao abandono. É uma entidade que ensina a importância da simplicidade e da resiliência. Dizem que ela gosta de oferendas simples, como velas brancas e flores do campo.`,
+          day: "Segunda-feira ou quarta-feira.",
+          moon: "Lua minguante (limpeza e cura).",
+          colors: "Branco, verde-claro, cinza.",
+          offerings: "Velas brancas, flores do campo, água de cheiro, pão, mel, ervas medicinais (hortelã, arruda).",
+          signs: "Virgem (serviço), Câncer (cuidado).",
+          places: "Encruzilhadas simples, portas de hospitais, locais de caridade.",
+          symbolism: "Trapos limpos, vasos de barro, ervas.",
+          utensils: "Cesto de vime, moringa com água, panos brancos.",
+          calunga: "Encruzilhadas próximas a rios ou locais de cura."
+        }
+      },
+      {
+        name: "Maria Quitéria",
+        emoji: "⚔️",
+        img: "https://raw.githubusercontent.com/alexialuzdeferro/pombagira-revelada/refs/heads/main/transferir%20(29).jpg",
+        domain: "Guerra/Proteção",
+        desc: "A guerreira que defende os seus com bravura e justiça.",
+        details: {
+          about: `Maria Quitéria é uma guerreira, associada à proteção e à luta. Seu nome faz referência à heroína brasileira Joana Angélica e à guerreira Quitéria, que lutou na Independência da Bahia. Ela é invocada para proteger contra inimigos, tanto físicos quanto espirituais, e para dar força em batalhas pessoais. Sua energia é de coragem e determinação, e ela é frequentemente representada com uma espada ou armadura.`,
+          day: "Terça-feira (dia de Ogum).",
+          moon: "Lua crescente (energias de luta e crescimento).",
+          colors: "Vermelho, marrom, preto.",
+          offerings: "Velas vermelhas, espadas ou facas (símbolos), cerveja preta, pimenta, comidas apimentadas.",
+          signs: "Áries (guerra), Escorpião (proteção).",
+          places: "Encruzilhadas de estradas movimentadas, campos de batalha simbólicos.",
+          symbolism: "Espada, escudo, armadura, bandeira.",
+          utensils: "Espada, facão, bandeira vermelha.",
+          calunga: "Encruzilhadas com energia de movimento, como próximas a quartéis ou academias."
+        }
+      },
+      {
+        name: "Rosa Caveira",
+        emoji: "💀",
+        img: "https://raw.githubusercontent.com/alexialuzdeferro/pombagira-revelada/refs/heads/main/a_pombagira_in_a_tattered_black_gown%20(8).jpeg",
+        domain: "Justiça/Morte",
+        desc: "Guardiã do equilíbrio e dos ciclos da vida.",
+        details: {
+          about: `Rosa Caveira é uma entidade poderosa, ligada à justiça e ao ciclo da vida e da morte. Seu nome evoca a imagem de uma caveira com uma rosa, simbolizando a beleza e a transitoriedade da existência. Ela é invocada para questões de justiça, especialmente quando há injustiças a serem reparadas. Também é associada à transformação e ao renascimento espiritual. Sua energia é intensa e não deve ser invocada sem preparo.`,
+          day: "Sábado.",
+          moon: "Lua nova (transformação) ou lua cheia (justiça).",
+          colors: "Preto, vermelho-sangue, roxo.",
+          offerings: "Velas pretas, rosas vermelhas e pretas, vinho tinto, ossos (símbolos), moedas.",
+          signs: "Escorpião (morte e renascimento), Plutão (transformação).",
+          places: "Cemitérios (especialmente à noite), encruzilhadas escuras.",
+          symbolism: "Caveira, rosa, balança (justiça), foice.",
+          utensils: "Foice, espelho preto, rosário de ossos.",
+          calunga: "Cemitérios ou encruzilhadas com energia densa."
+        }
+      },
+      {
+        name: "Dama da Noite",
+        emoji: "🌙",
+        img: "https://raw.githubusercontent.com/alexialuzdeferro/pombagira-revelada/refs/heads/main/a_pombagira_in_a_tattered_purple_gown%20(2).jpeg",
+        domain: "Mistério/Oculto",
+        desc: "Reveladora de segredos e mestre da intuição.",
+        details: {
+          about: `A Dama da Noite é a senhora dos segredos e do oculto. Ela rege os mistérios da noite, da magia e do desconhecido. É uma entidade que ajuda a desvendar verdades escondidas e a proteger segredos. Seu nome remete à flor que desabrocha apenas à noite, simbolizando sua conexão com o invisível. É uma Pombagira que exige respeito e discricionamento, pois seu conhecimento é profundo e perigoso para os imprudentes.`,
+          day: "Sexta-feira (noite).",
+          moon: "Lua negra (mistério máximo).",
+          colors: "Preto, roxo, azul-escuro.",
+          offerings: "Velas pretas, flores noturnas (dama-da-noite), vinho, incenso de mirra, objetos prateados.",
+          signs: "Escorpião (oculto), Peixes (intuição).",
+          places: "Locais escuros, florestas à noite, altares cobertos.",
+          symbolism: "Lua crescente, olho, chave, morcego.",
+          utensils: "Chave, espelho negro, livro de segredos.",
+          calunga: "Encruzilhadas à meia-noite ou locais abandonados."
+        }
+      },
+      {
+        name: "Sete Saias",
+        emoji: "💃",
+        img: "https://raw.githubusercontent.com/alexialuzdeferro/pombagira-revelada/refs/heads/main/a_pombagira_in_a_flowing_red_dress%20(1).jpeg",
+        domain: "Alegria/Intensidade",
+        desc: "Traz a vibração da dança e a celebração da vida.",
+        details: {
+          about: `Sete Saias é a Pombagira da alegria, da dança e da intensidade da vida. Seu nome faz referência às sete saias coloridas que ela usa, cada uma representando uma energia ou um aspecto da vida. Ela é invocada para trazer alegria, movimento e paixão. Também é associada à fertilidade e à abundância. Sua dança é contagiante, e sua presença traz um clima de festa e celebração.`,
+          day: "Quinta-feira ou domingo.",
+          moon: "Lua crescente (alegria) ou cheia (intensidade).",
+          colors: "Multicolorido (especialmente vermelho, rosa, amarelo).",
+          offerings: "Doces, frutas, velas coloridas, tecidos, música, dança.",
+          signs: "Sagitário (alegria), Leão (intensidade).",
+          places: "Praças, festas, encruzilhadas alegres.",
+          symbolism: "Saias coloridas, tambor, máscara.",
+          utensils: "Tambor, leque, fitas coloridas.",
+          calunga: "Encruzilhadas próximas a locais de festa."
+        }
+      },
+      {
+        name: "Cigana",
+        emoji: "🔮",
+        img: "https://raw.githubusercontent.com/alexialuzdeferro/pombagira-revelada/refs/heads/main/OIG1.jpg",
+        domain: "Liberdade/Prosperidade",
+        desc: "Espírito livre que abre caminhos e traz sorte.",
+        details: {
+          about: `A Pombagira Cigana é a senhora da liberdade e da prosperidade. Ela é associada aos povos ciganos, à magia das cartas e à vida nômade. Invocada para questões de independência, viagens e prosperidade material, ela também ajuda a desatar nós e a trazer sorte. Seu sincretismo pode ser ligado a Santa Sara Kali, a padroeira dos ciganos. Gosta de oferendas como moedas, fitas coloridas e objetos brilhantes.`,
+          day: "Quarta-feira.",
+          moon: "Lua cheia (prosperidade).",
+          colors: "Vermelho, dourado, verde.",
+          offerings: "Moedas, joias, cartas de baralho, velas douradas, vinho doce.",
+          signs: "Sagitário (liberdade), Touro (prosperidade).",
+          places: "Estradas, acampamentos, feiras.",
+          symbolism: "Carruagem, cartas, cristais, rodas.",
+          utensils: "Baralho cigano, sinos, moedas.",
+          calunga: "Encruzilhadas de estradas longas ou próximas a feiras."
+        }
+      },
+      {
+        name: "Maria Navalha",
+        emoji: "🔪",
+        img: "https://raw.githubusercontent.com/alexialuzdeferro/pombagira-revelada/refs/heads/main/Image_fx%20(14).png",
+        domain: "Malandragem/Rua",
+        desc: "Astuta e protetora, ensina a sobreviver com coragem.",
+        details: {
+          about: `Maria Navalha é a Pombagira da malandragem, da rua e da sobrevivência. Seu nome evoca a navalha, símbolo de proteção e de justiça nas mãos daqueles que precisam se defender. Ela é invocada para questões de proteção em ambientes perigosos, para afugentar maus elementos e para dar astúcia. É uma entidade que entende a vida nas ruas e a luta diária.`,
+          day: "Terça-feira ou sexta-feira à noite.",
+          moon: "Lua minguante (proteção).",
+          colors: "Preto, vermelho, prata.",
+          offerings: "Facas ou navalhas (símbolos), cerveja, cigarro, dinheiro.",
+          signs: "Escorpião (astúcia), Gêmeos (adaptação).",
+          places: "Ruas movimentadas, becos, encruzilhadas urbanas.",
+          symbolism: "Navalha, chave, carta de baralho (o malandro).",
+          utensils: "Navalha, dado, lenço vermelho.",
+          calunga: "Encruzilhadas em áreas urbanas ou periferias."
+        }
+      },
+      {
+        name: "Pombagira da Praia",
+        emoji: "🐚",
+        img: "https://raw.githubusercontent.com/alexialuzdeferro/pombagira-revelada/refs/heads/main/gua_poderosa_como_uma_deusa_com_poderes%20(3).jpeg",
+        domain: "Emoção/Limpeza (Água)",
+        desc: "Purifica a alma através das ondas e emoções.",
+        details: {
+          about: `A Pombagira da Praia é a senhora das águas, das emoções e da limpeza espiritual. Ela atua na purificação, na renovação e no equilíbrio emocional. É invocada para limpar energias negativas, para trazer calma e para trabalhar questões ligadas ao coração e às lágrimas. Sua energia é refrescante e acolhedora, como o mar.`,
+          day: "Quinta-feira ou segunda-feira.",
+          moon: "Lua cheia (emoção) ou crescente (limpeza).",
+          colors: "Azul, branco, prata.",
+          offerings: "Água do mar, conchas, velas azuis, flores brancas, perfumes suaves.",
+          signs: "Câncer (emoção), Peixes (intuição).",
+          places: "Praias, margens de rios, banheiros (para limpeza).",
+          symbolism: "Concha, onda, pérola, rede.",
+          utensils: "Concha, jarro com água do mar, leque.",
+          calunga: "Praias ou encruzilhadas próximas à água."
+        }
+      },
+      {
+        name: "Maria Farrapo",
+        emoji: "🌪️",
+        img: "https://raw.githubusercontent.com/alexialuzdeferro/pombagira-revelada/refs/heads/main/a_pombagira_in_a_tattered_red_gown%20(2).jpeg",
+        domain: "Sanidade/Caos (Mental)",
+        desc: "Transforma dores mentais em força e clareza.",
+        details: {
+          about: `Maria Farrapo é a Pombagira que lida com a sanidade e o caos mental. Seu nome "farrapo" remete a trapos, simbolizando a desordem e a necessidade de reconstrução. Ela é invocada para ajudar em questões de saúde mental, para acalmar mentes perturbadas e para trazer clareza em momentos de confusão. Sua energia é de transformação e de cura profunda.`,
+          day: "Segunda-feira.",
+          moon: "Lua minguante (limpeza mental).",
+          colors: "Branco sujo, cinza, lilás.",
+          offerings: "Velas brancas, ervas calmantes (camomila, lavanda), água com sal, pano branco.",
+          signs: "Virgem (organização), Peixes (mente).",
+          places: "Hospitais psiquiátricos (simbólicos), encruzilhadas silenciosas.",
+          symbolism: "Pano rasgado, nó, labirinto.",
+          utensils: "Pano branco, cordão com nós, incenso de lavanda.",
+          calunga: "Encruzilhadas próximas a locais de cura mental."
+        }
+      },
+      {
+        name: "Pombagira Menina",
+        emoji: "🎀",
+        img: "https://raw.githubusercontent.com/alexialuzdeferro/pombagira-revelada/refs/heads/main/xuai3w%20(73).jpeg",
+        domain: "Renovação/Inocência",
+        desc: "Guardiã da esperança e dos novos começos.",
+        details: {
+          about: `A Pombagira Menina representa a renovação, a inocência e o recomeço. Ela é a energia da criança, da pureza e da esperança. Invocada para trazer leveza, para renovar energias e para proteger crianças e projetos novos. Sua presença é doce, mas não deve ser subestimada, pois ela carrega a sabedoria daqueles que renascem.`,
+          day: "Domingo.",
+          moon: "Lua nova (renovação).",
+          colors: "Rosa, branco, azul-claro.",
+          offerings: "Doces, brinquedos, balas, velas rosas, flores brancas.",
+          signs: "Áries (início), Libra (equilíbrio).",
+          places: "Parques, escolas, encruzilhadas limpas.",
+          symbolism: "Boneca, flor, borboleta, sino.",
+          utensils: "Boneca, sino, balão.",
+          calunga: "Encruzilhadas próximas a locais de infância."
+        }
+      },
+      {
+        name: "Pombagira da Figueira",
+        emoji: "🌳",
+        img: "https://raw.githubusercontent.com/alexialuzdeferro/pombagira-revelada/refs/heads/main/pooomba%20(145).jpeg",
+        domain: "Raiz/Ancestralidade (Terra)",
+        desc: "Conecta-nos aos antepassados e à força da terra.",
+        details: {
+          about: `A Pombagira da Figueira é a guardiã das raízes, da ancestralidade e da conexão com a terra. Ela é invocada para fortalecer laços familiares, para honrar os ancestrais e para trazer estabilidade. A figueira é um símbolo de resistência e de ligação com o passado. Sua energia é de solidez e de respeito às tradições.`,
+          day: "Sábado.",
+          moon: "Lua minguante (raízes).",
+          colors: "Marrom, verde-escuro, preto.",
+          offerings: "Folhas de figueira, velas verdes, terra, sementes, mel.",
+          signs: "Touro (terra), Capricórnio (ancestralidade).",
+          places: "Pé de figueira, florestas, encruzilhadas rurais.",
+          symbolism: "Raízes, árvore, semente, vasos de barro.",
+          utensils: "Vaso de barro, sementes, enxada (símbolo).",
+          calunga: "Encruzilhadas próximas a árvores antigas."
+        }
+      }
+    ];
+
+    const $ = (sel, el=document) => el.querySelector(sel);
+    const $$ = (sel, el=document) => Array.from(el.querySelectorAll(sel));
+
+    const grid = $('#queenGrid');
+
+    const overlay = $('#overlay');
+    const closeBtn = $('#close');
+    const modal = $('#modal');
+
+    const mImg = $('#mImg');
+    const mTitle = $('#mTitle');
+    const mEmoji = $('#mEmoji');
+    const mDomain = $('#mDomain');
+    const mDesc = $('#mDesc');
+    const mTag = $('#mTag');
+    const mSigns = $('#mSigns');
+    const mCare = $('#mCare');
+    const mExtra = $('#mExtra');
+
+    const lastRevealPill = $('#lastRevealPill');
+
+    let reducedMotion = false;
+    let glowMode = true;
+
+    function queenCardTemplate(q){
+      const wrapper = document.createElement('button');
+      wrapper.type = 'button';
+      wrapper.className = [
+        'queen-card group relative overflow-hidden rounded-3xl text-left',
+        'border border-white/10 bg-white/5',
+        'hover:border-white/20 focus:outline-none focus:ring-2 focus:ring-[var(--hot)]/60',
+        'transition',
+        'min-h-[190px] sm:min-h-[220px]'
+      ].join(' ');
+
+      wrapper.setAttribute('aria-label', `Abrir detalhes de ${q.name}`);
+
+      wrapper.innerHTML = `
+        <img loading="lazy" src="${q.img}" alt="${q.name}" class="absolute inset-0 h-full w-full object-cover opacity-90" />
+        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/35 to-black/10"></div>
+        <div class="shine"></div>
+        <div class="relative p-4 sm:p-5 flex h-full flex-col justify-between">
+          <div class="flex items-start justify-between gap-2">
+            <div class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-black/25 px-3 py-1 text-[11px] text-white/80">
+              <span class="h-1.5 w-1.5 rounded-full bg-[var(--hot)] shadow-[0_0_16px_rgba(255,0,127,0.55)]"></span>
+              <span>${q.domain}</span>
+            </div>
+            <div class="text-2xl drop-shadow-[0_0_18px_rgba(255,0,127,0.18)]">${q.emoji}</div>
+          </div>
+
+          <div>
+            <div class="title-font text-lg sm:text-xl font-bold tracking-wider">${q.name}</div>
+            <div class="mt-1 text-xs text-white/70 line-clamp-2">${q.desc}</div>
+            <div class="mt-3 inline-flex items-center gap-2 text-xs font-semibold text-white/85">
+              <span class="rounded-full bg-white/10 px-3 py-1">Portal</span>
+              <span class="opacity-0 group-hover:opacity-100 transition">→</span>
+            </div>
+          </div>
+        </div>
+      `;
+
+      wrapper.addEventListener('click', () => openModal(q));
+
+      // Tilt + shine (mouse only)
+      wrapper.addEventListener('mousemove', (e) => {
+        if (reducedMotion) return;
+        const rect = wrapper.getBoundingClientRect();
+        const mx = ((e.clientX - rect.left) / rect.width) * 100;
+        const my = ((e.clientY - rect.top) / rect.height) * 100;
+        wrapper.style.setProperty('--mx', mx + '%');
+        wrapper.style.setProperty('--my', my + '%');
+        const dx = (e.clientX - (rect.left + rect.width/2)) / rect.width;
+        const dy = (e.clientY - (rect.top + rect.height/2)) / rect.height;
+        const rx = (-dy * 7).toFixed(2);
+        const ry = (dx * 9).toFixed(2);
+        wrapper.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg) translateY(-2px)`;
+      });
+      wrapper.addEventListener('mouseleave', () => {
+        wrapper.style.transform = '';
+      });
+
+      return wrapper;
+    }
+
+    function render(){
+      grid.innerHTML = '';
+      const frag = document.createDocumentFragment();
+      queens.forEach(q => frag.appendChild(queenCardTemplate(q)));
+      grid.appendChild(frag);
+    }
+
+    function renderDetails(q){
+      const d = q.details || {};
+      const rows = [
+        ['Dia de reverência', d.day],
+        ['Fase da lua', d.moon],
+        ['Cores', d.colors],
+        ['Oferendas', d.offerings],
+        ['Signos associados', d.signs],
+        ['Locais de oferenda', d.places],
+        ['Simbolismo', d.symbolism],
+        ['Utensílios', d.utensils],
+        ['Calunga/Encruzilhada', d.calunga]
+      ].filter(([,v]) => (v || '').trim().length);
+
+      return `
+        <p class="text-white/85">${d.about || q.desc || ''}</p>
+        <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
+          ${rows.map(([k,v]) => `
+            <div class="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
+              <div class="text-[11px] uppercase tracking-wider text-white/55">${k}</div>
+              <div class="mt-1 text-sm text-white/85 leading-relaxed">${v}</div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    function openModal(q){
+      mImg.src = q.img;
+      mImg.alt = q.name;
+      mTitle.textContent = `Pombagira ${q.name}`;
+      mEmoji.textContent = q.emoji;
+      mDomain.textContent = q.domain;
+      mDesc.innerHTML = renderDetails(q);
+      mTag.innerHTML = `<span class="h-1.5 w-1.5 rounded-full bg-[var(--cyan)] shadow-[0_0_14px_rgba(0,229,255,0.45)]"></span><span>${q.domain}</span>`;
+
+      // reset extra panel
+      mExtra.classList.add('hidden');
+      mExtra.innerHTML = '';
+
+      overlay.classList.add('show');
+      overlay.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      closeBtn.focus({ preventScroll: true });
+
+      try{
+        localStorage.setItem('lastReveal', JSON.stringify({ name: q.name, emoji: q.emoji, t: Date.now() }));
+        updateLastReveal();
+      }catch(_){ }
+    }
+
+    function closeModal(){
+      overlay.classList.remove('show');
+      overlay.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    }
+
+    overlay.addEventListener('click', (e) => {
+      const close = e.target?.dataset?.close === 'true';
+      if (close) closeModal();
+    });
+
+    closeBtn.addEventListener('click', closeModal);
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape'){
+        if (overlay.classList.contains('show')) closeModal();
+      }
+    });
+
+    // Simple focus trap inside modal
+    overlay.addEventListener('keydown', (e) => {
+      if (e.key !== 'Tab') return;
+      const focusables = $$('a, button, input, select, textarea, [tabindex]:not([tabindex="-1"])', modal)
+        .filter(el => !el.hasAttribute('disabled'));
+      if (!focusables.length) return;
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      if (e.shiftKey && document.activeElement === first){
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last){
+        e.preventDefault();
+        first.focus();
+      }
+    });
+
+    const SIGNS_HTML = `
+      <div class="text-[11px] uppercase tracking-wider text-white/60">Sinais de que estão presentes</div>
+      <ul class="mt-2 list-disc pl-5 space-y-1 text-white/90">
+        <li>Cheiro de flores ou perfumes inexplicáveis.</li>
+        <li>Velas queimando de forma irregular (chama alta ou apaga sozinha).</li>
+        <li>Sonhos com mulheres poderosas ou símbolos característicos (espadas, rosas, água).</li>
+        <li>Sensação de calor ou formigamento no ambiente.</li>
+      </ul>
+    `;
+
+    const CARE_HTML = `
+      <div class="text-[11px] uppercase tracking-wider text-white/60">Sinais de cobrança ou descontentamento</div>
+      <ul class="mt-2 list-disc pl-5 space-y-1 text-white/90">
+        <li>Pesadelos recorrentes.</li>
+        <li>Objetos que quebram ou desaparecem.</li>
+        <li>Sensação de opressão ou azar constante.</li>
+      </ul>
+      <div class="mt-3 rounded-xl border border-white/10 bg-black/25 px-3 py-3">
+        <div class="text-[11px] uppercase tracking-wider text-white/60">O que fazer</div>
+        <div class="mt-1 text-white/90">Faça um trabalho de descarrego, peça perdão com sinceridade e cumpra promessas pendentes.</div>
+      </div>
+    `;
+
+    function showExtra(kind){
+      mExtra.classList.remove('hidden');
+      mExtra.innerHTML = (kind === 'care') ? CARE_HTML : SIGNS_HTML;
+      // keep within view in long modals
+      try{ mExtra.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block: 'nearest' }); }catch(_){ }
+    }
+
+    mSigns?.addEventListener('click', () => showExtra('signs'));
+    mCare?.addEventListener('click', () => showExtra('care'));
+
+    // Last reveal pill
+    function updateLastReveal(){
+      try{
+        const raw = localStorage.getItem('lastReveal');
+        if (!raw) return;
+        const data = JSON.parse(raw);
+        if (!data?.name) return;
+        lastRevealPill.textContent = `${data.emoji || '✦'} ${data.name}`;
+        lastRevealPill.classList.remove('hidden');
+      }catch(_){ }
+    }
+    updateLastReveal();
+
+    // Toggles
+    const toggleMotion = $('#toggleMotion');
+    const toggleGlow = $('#toggleGlow');
+
+    function setReducedMotion(v){
+      reducedMotion = v;
+      try{ localStorage.setItem('reducedMotion', v ? '1' : '0'); }catch(_){ }
+      toggleMotion.textContent = reducedMotion ? 'Ativar movimento' : 'Reduzir movimento';
+      if (reducedMotion){
+        $$('.queen-card').forEach(el => el.style.transform = '');
+      }
+    }
+
+    function setGlow(v){
+      glowMode = v;
+      try{ localStorage.setItem('glowMode', v ? '1' : '0'); }catch(_){ }
+      toggleGlow.textContent = glowMode ? 'Modo fosco' : 'Modo brilho';
+      document.documentElement.style.setProperty('--hot', glowMode ? '#ff007f' : '#d84c86');
+      document.documentElement.style.setProperty('--cyan', glowMode ? '#00e5ff' : '#73d6e0');
+    }
+
+    (function restoreToggles(){
+      try{
+        const rm = localStorage.getItem('reducedMotion');
+        const gm = localStorage.getItem('glowMode');
+        setReducedMotion(rm === '1');
+        setGlow(gm !== '0');
+      }catch(_){
+        setReducedMotion(false);
+        setGlow(true);
+      }
+    })();
+
+    toggleMotion?.addEventListener('click', () => setReducedMotion(!reducedMotion));
+    toggleGlow?.addEventListener('click', () => setGlow(!glowMode));
+
+    // Initial render
+    render();
+
+    // Embers background (particles)
+    (function embers(){
+      const canvas = document.getElementById('embers');
+      const ctx = canvas.getContext('2d', { alpha: true });
+      let w=0,h=0,dpr=1;
+      let particles=[];
+      let raf=0;
+
+      function resize(){
+        dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+        w = Math.floor(window.innerWidth);
+        h = Math.floor(window.innerHeight);
+        canvas.width = Math.floor(w*dpr);
+        canvas.height = Math.floor(h*dpr);
+        canvas.style.width = w+'px';
+        canvas.style.height = h+'px';
+        ctx.setTransform(dpr,0,0,dpr,0,0);
+      }
+
+      function makeParticles(){
+        const count = reducedMotion ? 0 : Math.floor(Math.min(80, Math.max(26, w/28)));
+        particles = new Array(count).fill(0).map(() => ({
+          x: Math.random()*w,
+          y: Math.random()*h,
+          r: 0.6 + Math.random()*2.2,
+          vx: (-0.25 + Math.random()*0.5),
+          vy: (-0.55 - Math.random()*0.6),
+          a: 0.15 + Math.random()*0.55,
+          hue: Math.random() < 0.7 ? 330 : 195,
+          life: 0.4 + Math.random()*0.6
+        }));
+      }
+
+      function tick(){
+        if (reducedMotion){
+          ctx.clearRect(0,0,w,h);
+          raf = requestAnimationFrame(tick);
+          return;
+        }
+
+        ctx.clearRect(0,0,w,h);
+        for (const p of particles){
+          p.x += p.vx;
+          p.y += p.vy;
+          p.life -= 0.0025;
+
+          const alpha = Math.max(0, Math.min(1, p.a * p.life));
+          ctx.beginPath();
+          ctx.fillStyle = `hsla(${p.hue}, 100%, 65%, ${alpha})`;
+          ctx.shadowColor = `hsla(${p.hue}, 100%, 60%, ${alpha})`;
+          ctx.shadowBlur = 16;
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+          ctx.fill();
+
+          if (p.y < -20 || p.x < -30 || p.x > w+30 || p.life <= 0){
+            p.x = Math.random()*w;
+            p.y = h + 20 + Math.random()*120;
+            p.life = 0.4 + Math.random()*0.9;
+            p.hue = Math.random() < 0.7 ? 330 : 195;
+          }
+        }
+
+        raf = requestAnimationFrame(tick);
+      }
+
+      resize();
+      makeParticles();
+      tick();
+
+      window.addEventListener('resize', () => {
+        resize();
+        makeParticles();
+      }, { passive: true });
+
+      // Rebuild particles when reduced motion toggles
+      const origSetReduced = setReducedMotion;
+      window.setReducedMotion = (v) => {
+        origSetReduced(v);
+        makeParticles();
+      };
+    })();
+
+    // Ensure our setReducedMotion override is used by button (after embers patch)
+    toggleMotion?.addEventListener('click', () => window.setReducedMotion?.(!reducedMotion));
+  </script>
+</body>
+</html>
